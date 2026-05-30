@@ -19,7 +19,7 @@ public class BookCopy {
         return available;
     }
 
-    public void setAvailable(boolean available) {
+    private void setAvailable(boolean available) {
         this.available = available;
     }
 

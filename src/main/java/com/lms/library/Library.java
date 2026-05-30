@@ -1,16 +1,14 @@
 package com.lms.library;
 
 import com.lms.fine.DailyFine;
-import com.lms.fine.Fine;
 import com.lms.record.IssueRecord;
 import com.lms.book.Book;
+import com.lms.book.BookCategory;
 import com.lms.book.BookCopy;
 import com.lms.exception.*;
 import com.lms.user.User;
 
-import java.sql.SQLOutput;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class Library {
@@ -20,15 +18,23 @@ public class Library {
     private Map<String, List<IssueRecord>> records = new HashMap<>();
 
     public void addBook(Book book) {
+        if (books.containsKey(book.getBookId())) {
+            throw new BookException("Book already exists with id: " + book.getBookId());
+        }
         books.put(book.getBookId(), book);
     }
 
     public void addUser(User user) {
+        if (users.containsKey(user.getUserId())) {
+            throw new UserException("User already exists with id: " + user.getUserId());
+        }
         users.put(user.getUserId(), user);
     }
 
     public void removeBook(int bookId) {
-        books.remove(bookId);
+        Book book = books.get(bookId);
+        if (book == null) throw new BookNotFoundException(bookId);
+        removeBookFromLibrary(book);
     }
 
     public boolean searchBookById(int bookId) {
@@ -52,7 +58,7 @@ public class Library {
         }
 
 
-        if (user.getIssuedBooks().size() == user.getMaxBooksAllowed()) {
+        if (user.getIssuedBooks().size() >= user.getMaxBooksAllowed()) {
             throw new MaximumBooksLimitReachedException(userId);
         }
 
@@ -95,7 +101,7 @@ public class Library {
         return false;
     }
 
-    public List<Book> fetchBooksByCategory(String category) {
+    public List<Book> fetchBooksByCategory(BookCategory category) {
         List<Book> booksList = new ArrayList<>();
         for (Map.Entry<Integer, Book> entry : books.entrySet()) {
             if (entry.getValue().getCategory().equals(category)) {
@@ -105,8 +111,14 @@ public class Library {
         return booksList;
     }
 
+    public List<Book> fetchBooksByCategory(String category) {
+        return fetchBooksByCategory(BookCategory.valueOf(category.toUpperCase()));
+    }
+
     public void removeBookFromLibrary(Book book) {
-        if (!book.isAvailable()) throw new BookNotAvailableException(book.getBookId());
+        if (book.hasIssuedCopies()) {
+            throw new BookException("Book has issued copies and cannot be removed: " + book.getBookId());
+        }
         books.remove(book.getBookId());
     }
 
@@ -117,7 +129,15 @@ public class Library {
     public int totalBooks() {
         int size = 0;
         for (Map.Entry<Integer, Book> entry : books.entrySet()) {
-            size += entry.getValue().getCount();
+            size += entry.getValue().getTotalCopies();
+        }
+        return size;
+    }
+
+    public int totalAvailableCopies() {
+        int size = 0;
+        for (Map.Entry<Integer, Book> entry : books.entrySet()) {
+            size += entry.getValue().getAvailableCopies();
         }
         return size;
     }
@@ -133,7 +153,7 @@ public class Library {
     public List<Book> returnIssuedBooks() {
         List<Book> issuedBooks = new ArrayList<>();
         for (Map.Entry<Integer, Book> entry : books.entrySet()) {
-            if (!entry.getValue().isAvailable()) issuedBooks.add(entry.getValue());
+            if (entry.getValue().hasIssuedCopies()) issuedBooks.add(entry.getValue());
         }
         return issuedBooks;
     }
@@ -145,13 +165,13 @@ public class Library {
     }
 
     public List<IssueRecord> getRecordsForUser(String userId) {
-        return records.get(userId);
+        return Collections.unmodifiableList(records.getOrDefault(userId, List.of()));
     }
 
     public IssueRecord getRecordFromUserIdAndBookCopyId(String userId, int bookCopyId) {
         List<IssueRecord> userRecords = records.getOrDefault(userId, List.of());
         for (IssueRecord record : userRecords) {
-            if (record.getBookCopy().getBookCopyId() == bookCopyId) {
+            if (record.getBookCopy().getBookCopyId() == bookCopyId && record.getReturnedDate() == null) {
                 return record;
             }
         }

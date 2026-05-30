@@ -1,9 +1,9 @@
 package com.lms.user;
 
-import com.lms.book.Book;
 import com.lms.book.BookCopy;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class User {
@@ -47,7 +47,7 @@ public abstract class User {
     }
 
     public List<BookCopy> getIssuedBooks() {
-        return issuedBooks;
+        return Collections.unmodifiableList(issuedBooks);
     }
 
 }

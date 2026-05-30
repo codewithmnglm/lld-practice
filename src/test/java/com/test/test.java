@@ -1,6 +1,7 @@
 package com.test;
 
 import com.lms.book.*;
+import com.lms.exception.BookCantBeIssuedException;
 import com.lms.library.Library;
 import com.lms.user.Student;
 import com.lms.user.User;
@@ -20,12 +21,17 @@ public class test {
         library.addBook(b1);
         library.addBook(b2);
         library.addBook(b3);
-        System.out.println(library.totalBooks());
+        System.out.println("Total books: " + library.totalBooks());
+        System.out.println("Available copies: " + library.totalAvailableCopies());
         library.addUser(user);
         library.issueBook(1, "007",LocalDate.now());
 
         library.issueBook(2, "007",LocalDate.now());
-        library.issueBook(3, "007",LocalDate.now());
+        try {
+            library.issueBook(3, "007",LocalDate.now());
+        } catch (BookCantBeIssuedException exception) {
+            System.out.println(exception.getMessage());
+        }
        // library.returnBook(1,"007",101);
 
 

@@ -10,6 +10,7 @@ public abstract class Book {
     private String author;
     private int bookId;
     private int count;
+    private int totalCopies;
     private BookCategory category;
     protected List<BookCopy> copies = new ArrayList<>();
 
@@ -18,6 +19,7 @@ public abstract class Book {
         this.author = author;
         this.bookId = bookId;
         this.count = count;
+        this.totalCopies = count;
         this.category=category;
         for (int i = 1; i <= count; i++) {
             int copyId = bookId * 100 + i;
@@ -67,6 +69,27 @@ public abstract class Book {
     public int getCount() {
         return count;
     }
+
+    public int getAvailableCopies() {
+        return count;
+    }
+
+    public int getTotalCopies() {
+        return totalCopies;
+    }
+
+    public int getIssuedCopies() {
+        return totalCopies - count;
+    }
+
+    public boolean hasIssuedCopies() {
+        return getIssuedCopies() > 0;
+    }
+
+    public boolean areAllCopiesAvailable() {
+        return !hasIssuedCopies();
+    }
+
     public int getBookId() {
         return bookId;
     }
