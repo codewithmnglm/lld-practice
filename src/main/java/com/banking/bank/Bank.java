@@ -27,6 +27,7 @@ public class Bank {
         accounts.computeIfAbsent(customer, k -> new ArrayList<>()).add(newAccount);
         customer.addAccount(newAccount);
         customers.put(customer.getCustomerId(),customer);
+        newAccount.setAccountStatus(AccountStatus.ACTIVE);
         return newAccount;
 
     }
@@ -34,7 +35,7 @@ public class Bank {
     public void closeAccount(Customer customer,Account account) {
 
         if(account.getAccountStatus().equals(String.valueOf(AccountStatus.ACTIVE))){
-            account.setAccountStatus(String.valueOf(AccountStatus.CLOSED));
+            account.setAccountStatus(AccountStatus.CLOSED);
         }
         else throw new AccountClosedException("Account Already Closed");
 

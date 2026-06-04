@@ -1,8 +1,8 @@
 package com.banking.account;
 
-import com.banking.constant.Constant;
 import com.banking.customer.Customer;
 import com.banking.exception.AccountClosedException;
+import com.banking.exception.InsufficientAmountException;
 import com.banking.exception.WithdrawalNotAllowedException;
 import com.banking.transaction.Transaction;
 import com.banking.transaction.TransactionType;
@@ -14,15 +14,15 @@ public class SalaryAccount extends Account {
 
     public SalaryAccount(Customer customer) {
         super(customer);
-        setAccountType(String.valueOf(AccountType.SALARY_ACCOUNT));
-        setAccountStatus(String.valueOf(AccountStatus.ACTIVE));
+        setAccountType(AccountType.SALARY_ACCOUNT);
+        setAccountStatus(AccountStatus.ACTIVE);
 
     }
 
     @Override
     public void withdraw(double amount) {
 
-        if(getAccountStatus().equalsIgnoreCase(String.valueOf(AccountStatus.ACTIVE))) {
+        if(getAccountStatus()==AccountStatus.ACTIVE) {
 
 
             double balance = getBalance();
@@ -43,6 +43,8 @@ public class SalaryAccount extends Account {
 
     @Override
     public void transferFunds(double amount, Account destinationAccount) {
+        withdraw(amount);
+        destinationAccount.deposit(amount);
 
     }
 }

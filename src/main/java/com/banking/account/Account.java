@@ -17,8 +17,8 @@ public abstract class Account {
 
     protected Customer customer;
     protected double balance;
-    protected String accountType;
-    protected String accountStatus;
+    protected AccountType accountType;
+    protected AccountStatus accountStatus;
     protected List<Transaction> transactions = new ArrayList<>();
     private String accountNo;
 
@@ -28,27 +28,6 @@ public abstract class Account {
         this.accountNo = CommonBase.generateAccountNumber();
 
     }
-
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public List<Transaction> getTransactionsBetweenDates(LocalDateTime from, LocalDateTime to) {
-
-        return transactions.stream().filter(t -> t.getTxnDateTime().isAfter(from) && t.getTxnDateTime().isBefore(to)).collect(Collectors.toList());
-
-    }
-
-    public List<Transaction> getCreditTransactions() {
-
-        return transactions.stream().filter(t -> t.getType() == TransactionType.CREDIT).collect(Collectors.toList());
-    }
-
-    public List<Transaction> getDebitTransactions() {
-
-        return transactions.stream().filter(t -> t.getType() == TransactionType.DEBIT).collect(Collectors.toList());
-    }
-
     public abstract void withdraw(double amount);
 
     public abstract void transferFunds(double amount, Account destinationAccount);
@@ -78,25 +57,25 @@ public abstract class Account {
         this.balance = balance;
     }
 
-    public String getAccountType() {
+    public AccountType getAccountType() {
         return accountType;
     }
 
-    public void setAccountType(String accountType) {
+    public void setAccountType(AccountType accountType) {
         this.accountType = accountType;
     }
 
-    public String getAccountStatus() {
+    public AccountStatus getAccountStatus() {
         return accountStatus;
     }
 
-    public void setAccountStatus(String accountStatus) {
+    public void setAccountStatus(AccountStatus accountStatus) {
         this.accountStatus = accountStatus;
     }
 
     public void deposit(double amount) {
 
-        if (getAccountStatus().equalsIgnoreCase(String.valueOf(AccountStatus.ACTIVE))) {
+        if (getAccountStatus() == AccountStatus.ACTIVE) {
 
             if (amount <= 0) {
                 throw new DepositNotAllowedException("Amount must be greater than 0");
@@ -107,6 +86,25 @@ public abstract class Account {
         } else throw new AccountClosedException("Account Already Closed");
 
 
+    }
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public List<Transaction> getTransactionsBetweenDates(LocalDateTime from, LocalDateTime to) {
+
+        return transactions.stream().filter(t -> t.getTxnDateTime().isAfter(from) && t.getTxnDateTime().isBefore(to)).collect(Collectors.toList());
+
+    }
+
+    public List<Transaction> getCreditTransactions() {
+
+        return transactions.stream().filter(t -> t.getType() == TransactionType.CREDIT).collect(Collectors.toList());
+    }
+
+    public List<Transaction> getDebitTransactions() {
+
+        return transactions.stream().filter(t -> t.getType() == TransactionType.DEBIT).collect(Collectors.toList());
     }
 
 

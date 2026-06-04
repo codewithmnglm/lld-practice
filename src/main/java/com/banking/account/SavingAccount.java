@@ -14,16 +14,16 @@ public class SavingAccount extends Account {
 
     public SavingAccount(Customer customer) {
         super(customer);
+        setAccountType(AccountType.SAVINGS_ACCOUNT);
+        setAccountStatus(AccountStatus.ACTIVE);
         deposit(Constant.MIN_SAVING_ACCOUNT_BAL);
-        setAccountType(String.valueOf(AccountType.SAVING_ACCOUNT));
-        setAccountStatus(String.valueOf(AccountStatus.ACTIVE));
     }
 
 
     @Override
     public void withdraw(double amount) {
 
-        if(getAccountStatus().equalsIgnoreCase(String.valueOf(AccountStatus.ACTIVE))) {
+        if(getAccountStatus()==AccountStatus.ACTIVE) {
 
             double balance = getBalance();
             System.out.println("Current balance is: " + balance);
@@ -48,6 +48,10 @@ public class SavingAccount extends Account {
 
     @Override
     public void transferFunds(double amount, Account destinationAccount) {
+        withdraw(amount);
+        destinationAccount.deposit(amount);
+
+
 
     }
 }
