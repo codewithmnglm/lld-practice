@@ -1,9 +1,6 @@
 package com.banking.bank;
 
-import com.banking.account.Account;
-import com.banking.account.AccountStatus;
-import com.banking.account.SalaryAccount;
-import com.banking.account.SavingAccount;
+import com.banking.account.*;
 import com.banking.customer.Customer;
 import com.banking.exception.AccountClosedException;
 import java.util.ArrayList;
@@ -16,14 +13,8 @@ public class Bank {
     private Map<String, Customer> customers = new HashMap<>();
     private Map<Customer, List<Account>> accounts = new HashMap<>();
 
-    public Account openAccount(Customer customer,String accountType) {
-        Account newAccount = null;
-        switch(accountType){
-            case "SavingAccount": newAccount = new SavingAccount(customer);
-            break;
-            case "SalaryAccount": newAccount = new SalaryAccount(customer);
-            break;
-        }
+    public Account openAccount(Customer customer,AccountType accountType) {
+        Account newAccount = AccountFactory.createAccount(customer,accountType);
         accounts.computeIfAbsent(customer, k -> new ArrayList<>()).add(newAccount);
         customer.addAccount(newAccount);
         customers.put(customer.getCustomerId(),customer);
