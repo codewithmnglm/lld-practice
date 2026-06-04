@@ -12,6 +12,17 @@ public class Customer {
     private String firstName;
     private String lastName;
     private String email;
+    private String customerId;
+    private AccountType accountType;
+    private AccountStatus accountStatus;
+    private List<Account> accounts = new ArrayList<>();
+
+    public Customer(String firstName, String lastName, String email, String customerId) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.customerId = customerId;
+    }
 
     public String getCustomerId() {
         return customerId;
@@ -37,15 +48,6 @@ public class Customer {
         this.accountStatus = accountStatus;
     }
 
-    public void setAccounts(List<Account> accounts) {
-        this.accounts = accounts;
-    }
-
-    private String customerId;
-    private AccountType accountType;
-    private AccountStatus accountStatus;
-    private List<Account> accounts= new ArrayList<>();
-
     public String getFirstName() {
         return firstName;
     }
@@ -70,20 +72,17 @@ public class Customer {
         this.email = email;
     }
 
-    public Customer(String firstName, String lastName, String email,String customerId) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.customerId = customerId;
+    public List<Account> getAccounts() {
+        return accounts;
     }
 
-    public List<Account> getAccounts() { return accounts; }
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
+    }
 
     public void addAccount(Account account) {
         accounts.add(account);
     }
-
-
 
 
 }

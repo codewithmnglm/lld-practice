@@ -4,6 +4,10 @@ import com.banking.constant.Constant;
 import com.banking.customer.Customer;
 import com.banking.exception.AccountClosedException;
 import com.banking.exception.WithdrawalNotAllowedException;
+import com.banking.transaction.Transaction;
+import com.banking.transaction.TransactionType;
+
+import java.time.LocalDateTime;
 
 public class SalaryAccount extends Account {
 
@@ -29,6 +33,8 @@ public class SalaryAccount extends Account {
                 throw new WithdrawalNotAllowedException("Insufficient Balance");
             }
             setBalance(balance - amount);
+            transactions.add(new Transaction(amount, TransactionType.DEBIT, LocalDateTime.now(), customer.getCustomerId()));
+
         }
        else  throw new AccountClosedException("Account Already Closed : Cannot Withdraw Money");
 

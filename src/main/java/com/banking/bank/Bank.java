@@ -6,7 +6,6 @@ import com.banking.account.SalaryAccount;
 import com.banking.account.SavingAccount;
 import com.banking.customer.Customer;
 import com.banking.exception.AccountClosedException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
