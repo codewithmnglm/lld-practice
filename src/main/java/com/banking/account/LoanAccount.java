@@ -1,6 +1,7 @@
 package com.banking.account;
 
 import com.banking.customer.Customer;
+import com.banking.emi.EmiSchedule;
 import com.banking.exception.AccountClosedException;
 import com.banking.exception.DepositNotAllowedException;
 import com.banking.exception.InvalidTenureException;
@@ -8,13 +9,17 @@ import com.banking.exception.WithdrawalNotAllowedException;
 import com.banking.transaction.Transaction;
 import com.banking.transaction.TransactionType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoanAccount extends Account {
 
     private double principalAmount;
     private double interestRate;
     private int tenureInMonths;
+    private List<EmiSchedule> emiSchedules;
 
     public LoanAccount(Customer customer, double principalAmount, double interestRate, int tenureInMonths) {
         super(customer);
@@ -23,7 +28,22 @@ public class LoanAccount extends Account {
         this.principalAmount = principalAmount;
         this.interestRate = interestRate;
         this.tenureInMonths = tenureInMonths;
+        generateEmiSchedules();
 
+    }
+
+    public static double calculateMonthlyInstalments(double principal,
+                                                     double annualInterestRate,
+                                                     int tenureInMonths) {
+
+        double monthlyRate = annualInterestRate / (12 * 100);
+
+        double emi = principal
+                * monthlyRate
+                * Math.pow(1 + monthlyRate, tenureInMonths)
+                / (Math.pow(1 + monthlyRate, tenureInMonths) - 1);
+
+        return emi;
     }
 
     public double getPrincipalAmount() {
@@ -98,5 +118,39 @@ public class LoanAccount extends Account {
 
         return emi;
     }
+
+    private List<EmiSchedule> generateEmiSchedules() {
+        List<EmiSchedule> emiSchedules = new ArrayList<>();
+
+        double monthlyRate = interestRate / (12 * 100);
+        double outstandingPrincipal = principalAmount;
+        LocalDate loanDisbursedDate = LocalDate.now();
+        LocalDate twentiethDay = loanDisbursedDate.withDayOfMonth(20);
+
+        double emi = calculateMonthlyInstalments(principalAmount, interestRate, tenureInMonths);
+
+        // first due date rule — before 20th → next month's 5th, else → month-after-next's 5th
+        LocalDate firstDueDate = loanDisbursedDate.isBefore(twentiethDay)
+                ? loanDisbursedDate.plusMonths(1).withDayOfMonth(5)
+                : loanDisbursedDate.plusMonths(2).withDayOfMonth(5);
+
+        for (int i = 1; i <= tenureInMonths; i++) {
+            double interestComponent = outstandingPrincipal * monthlyRate;
+            double principalComponent = emi - interestComponent;
+            outstandingPrincipal -= principalComponent;
+
+            LocalDate dueDate = firstDueDate.plusMonths(i - 1);
+            emiSchedules.add(new EmiSchedule(i, dueDate, emi,
+                    principalComponent, interestComponent, Math.max(0, outstandingPrincipal)));
+        }
+
+        this.emiSchedules = emiSchedules;
+        return emiSchedules;
+    }
+
+    public List<EmiSchedule> getEmiSchedules() {
+        return emiSchedules;
+    }
+
 
 }
