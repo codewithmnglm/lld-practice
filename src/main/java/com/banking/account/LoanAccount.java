@@ -83,17 +83,20 @@ public class LoanAccount extends Account {
     }
 
     public double calculateEMI() {
+        if (getAccountStatus() == AccountStatus.CLOSED) {
+            throw new UnsupportedOperationException("Cannot calculate EMI: loan account is already closed");
+        }
+        if (principalAmount <= 0) {
+            throw new IllegalStateException("Cannot calculate EMI: principal amount is invalid");
+        }
+
         double monthlyRate = interestRate / (12 * 100);
-
-        int months = tenureInMonths * 12;
-
-        double emi = principalAmount *
-                monthlyRate *
-                Math.pow(1 + monthlyRate, months)
+        int months = tenureInMonths;
+        double emi = principalAmount * monthlyRate
+                * Math.pow(1 + monthlyRate, months)
                 / (Math.pow(1 + monthlyRate, months) - 1);
 
         return emi;
-
     }
 
 }
