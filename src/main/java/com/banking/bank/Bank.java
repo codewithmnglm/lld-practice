@@ -15,12 +15,28 @@ public class Bank {
 
     public Account openAccount(Customer customer,AccountType accountType) {
         Account newAccount = AccountFactory.createAccount(customer,accountType);
+        addAccount(customer, newAccount);
+        return newAccount;
+
+    }
+
+    public LoanAccount openLoanAccount(Customer customer, double principalAmount,
+                                       double interestRate, int tenureInMonths) {
+        LoanAccount loanAccount = AccountFactory.createLoanAccount(
+                customer,
+                principalAmount,
+                interestRate,
+                tenureInMonths
+        );
+        addAccount(customer, loanAccount);
+        return loanAccount;
+    }
+
+    private void addAccount(Customer customer, Account newAccount) {
         accounts.computeIfAbsent(customer, k -> new ArrayList<>()).add(newAccount);
         customer.addAccount(newAccount);
         customers.put(customer.getCustomerId(),customer);
         newAccount.setAccountStatus(AccountStatus.ACTIVE);
-        return newAccount;
-
     }
 
     public void closeAccount(Customer customer,Account account) {

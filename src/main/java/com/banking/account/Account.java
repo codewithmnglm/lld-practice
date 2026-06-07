@@ -30,9 +30,6 @@ public abstract class Account {
     }
     public abstract void withdraw(double amount);
 
-    public abstract void transferFunds(double amount, Account destinationAccount);
-
-
     public String getAccountNo() {
         return accountNo;
     }
