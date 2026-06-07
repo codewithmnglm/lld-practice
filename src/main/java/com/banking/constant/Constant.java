@@ -1,0 +1,11 @@
+package com.banking.constant;
+
+public class Constant {
+
+    public static final double MIN_SALARY_ACCOUNT_BAL = 0;
+    public static final double MIN_SAVING_ACCOUNT_BAL = 1000;
+
+    public static final String SAVINGS_ACCOUNT= "SavingAccount";
+    public static final String SALARY_ACCOUNT= "SalaryAccount";
+
+}
