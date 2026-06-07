@@ -9,7 +9,7 @@ import com.banking.transaction.TransactionType;
 
 import java.time.LocalDateTime;
 
-public class SalaryAccount extends Account {
+public class SalaryAccount extends Account implements Transferable {
 
 
     public SalaryAccount(Customer customer) {
@@ -23,8 +23,6 @@ public class SalaryAccount extends Account {
     public void withdraw(double amount) {
 
         if(getAccountStatus()==AccountStatus.ACTIVE) {
-
-
             double balance = getBalance();
             if (amount <= 0) {
                 throw new WithdrawalNotAllowedException("Amount must be greater than 0");

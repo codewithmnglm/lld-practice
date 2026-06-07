@@ -9,7 +9,7 @@ import com.banking.transaction.TransactionType;
 
 import java.time.LocalDateTime;
 
-public class SavingAccount extends Account {
+public class SavingAccount extends Account implements Transferable {
 
 
     public SavingAccount(Customer customer) {
