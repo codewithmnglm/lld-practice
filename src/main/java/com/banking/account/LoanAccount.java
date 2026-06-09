@@ -1,7 +1,9 @@
 package com.banking.account;
 
+import com.banking.constant.Constant;
 import com.banking.customer.Customer;
 import com.banking.emi.EmiSchedule;
+import com.banking.emi.EmiStatus;
 import com.banking.exception.AccountClosedException;
 import com.banking.exception.DepositNotAllowedException;
 import com.banking.exception.InvalidTenureException;
@@ -88,10 +90,6 @@ public class LoanAccount extends Account {
         if (amount <= 0) {
             throw new DepositNotAllowedException("Amount must be greater than 0");
         }
-        if (amount > principalAmount) {
-            throw new DepositNotAllowedException("Amount cannot be greater than outstanding loan amount");
-        }
-
         principalAmount -= amount;
         transactions.add(new Transaction(amount, TransactionType.CREDIT, LocalDateTime.now(), customer.getCustomerId()));
 
@@ -100,23 +98,6 @@ public class LoanAccount extends Account {
             tenureInMonths = 0;
             System.out.println("Loan account has been closed");
         }
-    }
-
-    public double calculateEMI() {
-        if (getAccountStatus() == AccountStatus.CLOSED) {
-            throw new UnsupportedOperationException("Cannot calculate EMI: loan account is already closed");
-        }
-        if (principalAmount <= 0) {
-            throw new IllegalStateException("Cannot calculate EMI: principal amount is invalid");
-        }
-
-        double monthlyRate = interestRate / (12 * 100);
-        int months = tenureInMonths;
-        double emi = principalAmount * monthlyRate
-                * Math.pow(1 + monthlyRate, months)
-                / (Math.pow(1 + monthlyRate, months) - 1);
-
-        return emi;
     }
 
     private List<EmiSchedule> generateEmiSchedules() {
@@ -150,6 +131,77 @@ public class LoanAccount extends Account {
 
     public List<EmiSchedule> getEmiSchedules() {
         return emiSchedules;
+    }
+
+    public void markOverdueInstallments() {
+
+        List<EmiSchedule> emiSchedules = getEmiSchedules();
+        emiSchedules.stream().
+                filter(e -> e.getDueDate().isBefore(LocalDate.now()) && e.getStatus() == EmiStatus.PENDING).
+                forEach(e -> e.setStatus(EmiStatus.OVERDUE));
+
+    }
+
+    public void payEmi(int installmentNo) {
+        List<EmiSchedule> emiSchedules = getEmiSchedules();
+        EmiSchedule installment = emiSchedules.stream().
+                filter(e -> e.getInstallmentNo() == installmentNo)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Installment not found: " + installmentNo));
+
+        if (installment.getStatus() == EmiStatus.PAID) {
+            throw new IllegalStateException("Installment " + installmentNo + " is already paid");
+        }
+        deposit(installment.getEmiAmount());
+        installment.setStatus(EmiStatus.PAID);
+        boolean allPaid = emiSchedules.stream().allMatch(e -> e.getStatus() == EmiStatus.PAID);
+        if (allPaid) {
+            setAccountStatus(AccountStatus.CLOSED);
+            System.out.println("All EMIs paid. Loan account closed.");
+        }
+
+
+    }
+
+    public void forecloseLoan() {
+
+        double forecloseLoanAmount = calculateForeclosureAmount();
+        System.out.println("Total Foreclosure Amount: " + forecloseLoanAmount);
+        deposit(forecloseLoanAmount);
+        getEmiSchedules().stream()
+                .filter(e -> e.getStatus() == EmiStatus.PENDING
+                        || e.getStatus() == EmiStatus.OVERDUE)
+                .forEach(e -> e.setStatus(EmiStatus.CANCELLED));
+        setAccountStatus(AccountStatus.CLOSED);
+        System.out.println("Loan account closed.");
+    }
+
+
+    private double calculateForeclosureAmount() {
+
+        double outstandingPrincipal =
+                getOutstandingPrincipalAmount();
+
+        double foreclosurePenalty = getForeclosurePenalty(outstandingPrincipal);
+        System.out.println("Foreclosure Penalty: " + foreclosurePenalty);
+        return outstandingPrincipal + foreclosurePenalty;
+    }
+
+    private double getForeclosurePenalty(double outstandingPrincipal) {
+
+        return outstandingPrincipal *
+                (Constant.PREPAYMENT_PENALTY / 100.0);
+
+
+    }
+
+    private double getOutstandingPrincipalAmount() {
+        double paidPrincipal = emiSchedules.stream()
+                .filter(e -> e.getStatus() == EmiStatus.PAID)
+                .mapToDouble(EmiSchedule::getPrincipalComponent)
+                .sum();
+        return getPrincipalAmount() - paidPrincipal;
+
     }
 
 
