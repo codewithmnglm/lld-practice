@@ -4,5 +4,6 @@ public enum EmiStatus {
     PENDING,
     PAID,
     OVERDUE,
-    PARTIALLY_PAID
+    PARTIALLY_PAID,
+    CANCELLED
 }
