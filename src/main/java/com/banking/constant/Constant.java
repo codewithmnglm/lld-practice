@@ -8,4 +8,6 @@ public class Constant {
     public static final String SAVINGS_ACCOUNT= "SavingAccount";
     public static final String SALARY_ACCOUNT= "SalaryAccount";
 
+    public static final double PREPAYMENT_PENALTY = 3.0;
+
 }
