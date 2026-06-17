@@ -5,6 +5,8 @@ public enum AccountType {
     SALARY_ACCOUNT,
     SAVINGS_ACCOUNT,
     LOAN_ACCOUNT,
+    CURRENT_ACCOUNT,
+    CREDITS_ACCOUNT,
 
 
 }
