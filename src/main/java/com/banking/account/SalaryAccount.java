@@ -32,7 +32,7 @@ public class SalaryAccount extends Account implements Transferable {
                 .sum();
 
         if (totalWithdrawnToday + amount > Constant.DAILY_WITHDRAWL_LIMIT_SALARY_ACCOUNT) {
-            throw new DailyWithdrawlLimitReachedException("Withdrawal Limit Reached for Savings Account: Limit Per Day " + Constant.DAILY_WITHDRAWL_LIMIT_SALARY_ACCOUNT );
+            throw new DailyWithdrawlLimitReachedException("Withdrawal Limit Reached for Salary Account: Limit Per Day " + Constant.DAILY_WITHDRAWL_LIMIT_SALARY_ACCOUNT );
         }
 
         if(getAccountStatus()==AccountStatus.ACTIVE) {
