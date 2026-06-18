@@ -8,6 +8,7 @@ import com.banking.exception.DepositNotAllowedException;
 import com.banking.transaction.Transaction;
 import com.banking.transaction.TransactionType;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,6 +103,14 @@ public abstract class Account {
     public List<Transaction> getDebitTransactions() {
 
         return transactions.stream().filter(t -> t.getType() == TransactionType.DEBIT).collect(Collectors.toList());
+    }
+
+    protected double getTotalWithdrawnOn(LocalDate date) {
+        return transactions.stream()
+                .filter(t -> t.getType() == TransactionType.DEBIT)
+                .filter(t -> t.getTxnDateTime().toLocalDate().equals(date))
+                .mapToDouble(Transaction::getAmount)
+                .sum();
     }
 
 

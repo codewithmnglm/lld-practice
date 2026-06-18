@@ -25,11 +25,7 @@ public class SalaryAccount extends Account implements Transferable {
     @Override
     public void withdraw(double amount) {
 
-        double totalWithdrawnToday = transactions.stream()
-                .filter(t -> t.getTxnDateTime().toLocalDate().equals(LocalDate.now()))
-                .filter(t -> t.getType() == TransactionType.DEBIT)
-                .mapToDouble(Transaction::getAmount)
-                .sum();
+        double totalWithdrawnToday = getTotalWithdrawnOn(LocalDate.now());
 
         if (totalWithdrawnToday + amount > Constant.DAILY_WITHDRAWL_LIMIT_SALARY_ACCOUNT) {
             throw new DailyWithdrawlLimitReachedException("Withdrawal Limit Reached for Salary Account: Limit Per Day " + Constant.DAILY_WITHDRAWL_LIMIT_SALARY_ACCOUNT );
