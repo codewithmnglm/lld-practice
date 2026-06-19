@@ -13,8 +13,6 @@ public class Customer {
     private String lastName;
     private String email;
     private String customerId;
-    private AccountType accountType;
-    private AccountStatus accountStatus;
     private List<Account> accounts = new ArrayList<>();
 
     public Customer(String firstName, String lastName, String email, String customerId) {
@@ -30,22 +28,6 @@ public class Customer {
 
     public void setCustomerId(String customerId) {
         this.customerId = customerId;
-    }
-
-    public AccountType getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(AccountType accountType) {
-        this.accountType = accountType;
-    }
-
-    public AccountStatus getAccountStatus() {
-        return accountStatus;
-    }
-
-    public void setAccountStatus(AccountStatus accountStatus) {
-        this.accountStatus = accountStatus;
     }
 
     public String getFirstName() {
