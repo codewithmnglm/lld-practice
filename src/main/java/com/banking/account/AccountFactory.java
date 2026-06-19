@@ -8,6 +8,7 @@ public class AccountFactory {
         switch (accountType) {
             case SAVINGS_ACCOUNT: return new SavingAccount(customer);
             case SALARY_ACCOUNT: return new SalaryAccount(customer);
+            case OD_ACCOUNT: return new OverDraftAccount(customer);
             case LOAN_ACCOUNT:
                 throw new IllegalArgumentException("Use createLoanAccount for loan accounts");
             default: throw new IllegalArgumentException("Unknown account type: " + accountType);
