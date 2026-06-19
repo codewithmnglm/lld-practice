@@ -25,25 +25,35 @@ public class SalaryAccount extends Account implements Transferable {
     @Override
     public void withdraw(double amount) {
 
+        ensureAccountIsActive(this.accountStatus);
+        validatePositiveAmount(amount);
+
         double totalWithdrawnToday = getTotalWithdrawnOn(LocalDate.now());
 
-        if (totalWithdrawnToday + amount > Constant.DAILY_WITHDRAWL_LIMIT_SALARY_ACCOUNT) {
-            throw new DailyWithdrawlLimitReachedException("Withdrawal Limit Reached for Salary Account: Limit Per Day " + Constant.DAILY_WITHDRAWL_LIMIT_SALARY_ACCOUNT );
+        if (totalWithdrawnToday + amount >
+                Constant.DAILY_WITHDRAWL_LIMIT_SALARY_ACCOUNT) {
+            throw new DailyWithdrawlLimitReachedException(
+                    "Daily withdrawal limit reached"
+            );
         }
 
-        if(getAccountStatus()==AccountStatus.ACTIVE) {
-            double balance = getBalance();
-            if (amount <= 0) {
-                throw new WithdrawalNotAllowedException("Amount must be greater than 0");
-            }
-            if (amount > balance) {
-                throw new WithdrawalNotAllowedException("Insufficient Balance");
-            }
-            setBalance(balance - amount);
-            transactions.add(new Transaction(amount, TransactionType.DEBIT, LocalDateTime.now(), customer.getCustomerId()));
+        double availableBalance =
+                getBalance() - Constant.MIN_SALARY_ACCOUNT_BAL;
 
+        if (amount > availableBalance) {
+            throw new WithdrawalNotAllowedException(
+                    "Insufficient available balance"
+            );
         }
-       else  throw new AccountClosedException("Account Already Closed : Cannot Withdraw Money");
+
+        setBalance(getBalance() - amount);
+
+        recordTransaction(new Transaction(
+                amount,
+                TransactionType.DEBIT,
+                LocalDateTime.now(),
+                customer.getCustomerId()
+        ));
 
 
     }

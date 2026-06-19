@@ -84,12 +84,9 @@ public class LoanAccount extends Account {
     @Override
     public void deposit(double amount) {
 
-        if (getAccountStatus() != AccountStatus.ACTIVE) {
-            throw new AccountClosedException("Loan account is already closed");
-        }
-        if (amount <= 0) {
-            throw new DepositNotAllowedException("Amount must be greater than 0");
-        }
+        ensureAccountIsActive(getAccountStatus());
+        validatePositiveAmount(amount);
+
         principalAmount -= amount;
         transactions.add(new Transaction(amount, TransactionType.CREDIT, LocalDateTime.now(), customer.getCustomerId()));
 

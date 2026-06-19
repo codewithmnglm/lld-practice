@@ -32,12 +32,8 @@ public class OverDraftAccount extends Account implements Transferable {
 
     @Override
     public void withdraw(double amount) {
-        if (getAccountStatus() != AccountStatus.ACTIVE) {
-            throw new AccountClosedException("Account Already Closed : Cannot Withdraw Money");
-        }
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Withdrawal amount must be positive");
-        }
+        ensureAccountIsActive(this.accountStatus);
+        validatePositiveAmount(amount);
 
         double newBalance = getBalance() - amount;
 
@@ -51,17 +47,18 @@ public class OverDraftAccount extends Account implements Transferable {
         }
 
         setBalance(newBalance);
-        transactions.add(new Transaction(amount, TransactionType.DEBIT, LocalDateTime.now(), customer.getCustomerId()));
-    }
+        recordTransaction(new Transaction(
+                amount,
+                TransactionType.DEBIT,
+                LocalDateTime.now(),
+                customer.getCustomerId()
+        ));
+  }
 
     @Override
     public void deposit(double amount) {
-        if (getAccountStatus() != AccountStatus.ACTIVE) {
-            throw new AccountClosedException("Account Already Closed : Cannot Deposit Money");
-        }
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Deposit amount must be positive");
-        }
+        ensureAccountIsActive(getAccountStatus());
+        validatePositiveAmount(amount);
 
         double newBalance = getBalance() + amount;
         setBalance(newBalance);
@@ -71,8 +68,13 @@ public class OverDraftAccount extends Account implements Transferable {
         } else if (getOverDraftAmount() < Constant.OD_LIMIT) {
             setOverDraftAmount(Constant.OD_LIMIT);
         }
-        transactions.add(new Transaction(amount, TransactionType.CREDIT, LocalDateTime.now(), customer.getCustomerId()));
-    }
+        recordTransaction(new Transaction(
+                amount,
+                TransactionType.CREDIT,
+                LocalDateTime.now(),
+                customer.getCustomerId()
+        ));
+   }
 
     @Override
     public void transferFunds(double amount, Account destinationAccount) {
