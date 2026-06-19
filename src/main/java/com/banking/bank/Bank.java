@@ -3,6 +3,8 @@ package com.banking.bank;
 import com.banking.account.*;
 import com.banking.customer.Customer;
 import com.banking.exception.AccountClosedException;
+import com.banking.exception.AccountException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,10 +43,15 @@ public class Bank {
 
     public void closeAccount(Customer customer,Account account) {
 
-        if(account.getAccountStatus().equals(String.valueOf(AccountStatus.ACTIVE))){
-            account.setAccountStatus(AccountStatus.CLOSED);
+        if (!customer.getAccounts().contains(account)) {
+            throw new AccountException("Account does not belong to this customer");
         }
-        else throw new AccountClosedException("Account Already Closed");
+
+        if (account.getAccountStatus() == AccountStatus.ACTIVE) {
+            account.setAccountStatus(AccountStatus.CLOSED);
+        } else {
+            throw new AccountClosedException("Account Already Closed");
+        }
 
     }
 }

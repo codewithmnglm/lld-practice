@@ -1,35 +1,26 @@
 package com.banking.account;
 
-import com.banking.constant.Constant;
 import com.banking.customer.Customer;
 import com.banking.exception.AccountClosedException;
-import com.banking.exception.DailyWithdrawlLimitReachedException;
-import com.banking.exception.InsufficientAmountException;
 import com.banking.exception.WithdrawalNotAllowedException;
 import com.banking.transaction.Transaction;
 import com.banking.transaction.TransactionType;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class SalaryAccount extends Account implements Transferable {
+public class CurrentAccount extends Account implements Transferable {
 
 
-    public SalaryAccount(Customer customer) {
+    public CurrentAccount(Customer customer) {
         super(customer);
-        setAccountType(AccountType.SALARY_ACCOUNT);
+        setAccountType(AccountType.CURRENT_ACCOUNT);
         setAccountStatus(AccountStatus.ACTIVE);
-
     }
 
     @Override
     public void withdraw(double amount) {
 
-        double totalWithdrawnToday = getTotalWithdrawnOn(LocalDate.now());
-
-        if (totalWithdrawnToday + amount > Constant.DAILY_WITHDRAWL_LIMIT_SALARY_ACCOUNT) {
-            throw new DailyWithdrawlLimitReachedException("Withdrawal Limit Reached for Salary Account: Limit Per Day " + Constant.DAILY_WITHDRAWL_LIMIT_SALARY_ACCOUNT );
-        }
+        //No daily limit in currentAccount
 
         if(getAccountStatus()==AccountStatus.ACTIVE) {
             double balance = getBalance();
@@ -43,8 +34,7 @@ public class SalaryAccount extends Account implements Transferable {
             transactions.add(new Transaction(amount, TransactionType.DEBIT, LocalDateTime.now(), customer.getCustomerId()));
 
         }
-       else  throw new AccountClosedException("Account Already Closed : Cannot Withdraw Money");
-
+        else  throw new AccountClosedException("Account Already Closed : Cannot Withdraw Money");
 
     }
 

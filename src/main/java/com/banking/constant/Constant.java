@@ -10,4 +10,15 @@ public class Constant {
 
     public static final double PREPAYMENT_PENALTY = 3.0;
 
+    public static final double DAILY_WITHDRAWL_LIMIT_SALARY_ACCOUNT= 10000;
+
+    public static final double DAILY_WITHDRAWL_LIMIT_CURRENT_ACCOUNT= 5000;
+
+    public static final double DAILY_WITHDRAWL_LIMIT_SAVINGS_ACCOUNT= 5000;
+
+    public static final double OD_LIMIT= 5000;
+
+
+
+
 }
