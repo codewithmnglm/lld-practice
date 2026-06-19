@@ -7,6 +7,7 @@ public enum AccountType {
     LOAN_ACCOUNT,
     CURRENT_ACCOUNT,
     CREDITS_ACCOUNT,
+    OD_ACCOUNT,
 
 
 }
