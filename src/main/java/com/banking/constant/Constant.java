@@ -16,6 +16,8 @@ public class Constant {
 
     public static final double DAILY_WITHDRAWL_LIMIT_SAVINGS_ACCOUNT= 5000;
 
+    public static final double OD_LIMIT= 5000;
+
 
 
 
