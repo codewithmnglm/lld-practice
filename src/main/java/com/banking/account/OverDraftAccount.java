@@ -10,7 +10,7 @@ import com.banking.transaction.TransactionType;
 
 import java.time.LocalDateTime;
 
-public class OverDraftAccount extends Account implements Transferable {
+public class OverDraftAccount extends TransferableAccount {
 
 
     private double overDraftAmount;
@@ -75,28 +75,13 @@ public class OverDraftAccount extends Account implements Transferable {
         ));
    }
 
-    @Override
-    public void transferFunds(double amount, Account destinationAccount) {
-        if (destinationAccount == null) {
-            throw new IllegalArgumentException("Destination account must not be null");
-        }
-        if (destinationAccount == this) {
-            throw new IllegalArgumentException("Source and destination accounts must be different");
-        }
-        if (destinationAccount.getAccountStatus() != AccountStatus.ACTIVE) {
-            throw new AccountClosedException("Destination account is closed");
-        }
 
-        withdraw(amount);
-        destinationAccount.deposit(amount);
-
-    }
 
     public double getUsedOverdraft() {
         return Math.max(0, -getBalance());
     }
 
     public double getAvailableOverdraft() {
-        return getOverDraftAmount() - getUsedOverdraft();
+        return Constant.OD_LIMIT - getUsedOverdraft();
     }
 }

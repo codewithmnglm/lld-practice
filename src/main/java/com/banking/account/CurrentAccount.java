@@ -10,7 +10,7 @@ import com.banking.transaction.TransactionType;
 
 import java.time.LocalDateTime;
 
-public class CurrentAccount extends Account implements Transferable {
+public class CurrentAccount extends TransferableAccount {
 
 
     public CurrentAccount(Customer customer) {
@@ -45,24 +45,5 @@ public class CurrentAccount extends Account implements Transferable {
 
     }
 
-    @Override
-    public void transferFunds(double amount, Account destinationAccount) {
-        if (destinationAccount == null) {
-            throw new IllegalArgumentException("Destination account must not be null");
-        }
-        if (destinationAccount == this) {
-            throw new IllegalArgumentException("Source and destination accounts must be different");
-        }
-        if (destinationAccount.getAccountStatus() != AccountStatus.ACTIVE) {
-            throw new AccountClosedException("Destination account is closed");
-        }
-        withdraw(amount);//throws immediately if insufficient funds — deposit never runs
-        try {
-            destinationAccount.deposit(amount);
-        } catch (Exception e) {
-            this.deposit(amount); // compensating transaction — undo the withdrawal
-            throw new TransferFailException("Transfer failed, rolled back", e);
-        }
 
-    }
 }

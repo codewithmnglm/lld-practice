@@ -77,7 +77,6 @@ public abstract class Account {
 
         ensureAccountIsActive(getAccountStatus());
         validatePositiveAmount(amount);
-
         setBalance(getBalance() + amount);
         recordTransaction(new Transaction(amount, TransactionType.CREDIT, LocalDateTime.now(), customer.getCustomerId()));
 
