@@ -4,14 +4,14 @@ import com.banking.customer.Customer;
 import com.banking.exception.AccountClosedException;
 import com.banking.exception.TransferFailException;
 
-public abstract class TransferableAccount extends Account implements Transferable {
+public abstract class TransferableAccount extends Account {
 
 
     public TransferableAccount(Customer customer) {
         super(customer);
     }
 
-    @Override
+
     public void transferFunds(double amount, Account destinationAccount) {
         if (destinationAccount == null) {
             throw new IllegalArgumentException("Destination account must not be null");
