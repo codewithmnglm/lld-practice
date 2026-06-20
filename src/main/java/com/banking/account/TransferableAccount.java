@@ -3,12 +3,14 @@ package com.banking.account;
 import com.banking.customer.Customer;
 import com.banking.exception.AccountClosedException;
 import com.banking.exception.TransferFailException;
+import com.banking.interest.InterestPolicy;
 
 public abstract class TransferableAccount extends Account {
 
 
-    public TransferableAccount(Customer customer) {
-        super(customer);
+    public TransferableAccount(Customer customer, InterestPolicy interestPolicy) {
+
+        super(customer,interestPolicy);
     }
 
 
