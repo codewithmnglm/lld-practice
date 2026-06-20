@@ -1,4 +1,4 @@
-package com.test;
+package com.test.lms;
 
 import com.lms.book.*;
 import com.lms.exception.BookCantBeIssuedException;
