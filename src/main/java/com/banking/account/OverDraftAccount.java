@@ -18,7 +18,6 @@ public class OverDraftAccount extends Account implements Transferable {
     public OverDraftAccount(Customer customer) {
         super(customer);
         setAccountType(AccountType.OD_ACCOUNT);
-        setAccountStatus(AccountStatus.ACTIVE);
         setOverDraftAmount(Constant.OD_LIMIT);
     }
 

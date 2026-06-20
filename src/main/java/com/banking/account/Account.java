@@ -28,6 +28,7 @@ public abstract class Account {
     public Account(Customer customer) {
         this.customer = customer;
         this.accountNo = CommonBase.generateAccountNumber();
+        this.accountStatus = AccountStatus.ACTIVE;
 
     }
     public abstract void withdraw(double amount);
@@ -128,6 +129,32 @@ public abstract class Account {
     protected void recordTransaction(Transaction transaction) {
         transactions.add(transaction);
     }
+
+
+    public void activate() {
+        accountStatus = AccountStatus.ACTIVE;
+    }
+
+    public void close() {
+        if (accountStatus == AccountStatus.CLOSED) {
+            throw new AccountClosedException("Account is already closed");
+        }
+
+        accountStatus = AccountStatus.CLOSED;
+    }
+
+    public void freeze() {
+        if (accountStatus != AccountStatus.ACTIVE) {
+            throw new IllegalStateException(
+                    "Only an active account can be frozen"
+            );
+        }
+
+        accountStatus = AccountStatus.FROZEN;
+    }
+
+
+
 
 
 }

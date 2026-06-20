@@ -1,7 +1,9 @@
 package com.banking.account;
 
 import com.banking.customer.Customer;
+import com.banking.exception.AccountClosedException;
 import com.banking.exception.DailyWithdrawlLimitReachedException;
+import com.banking.exception.TransferFailException;
 import com.banking.exception.WithdrawalNotAllowedException;
 import com.banking.constant.Constant;
 import com.banking.transaction.Transaction;
@@ -17,7 +19,6 @@ public class SavingAccount extends Account implements Transferable {
     public SavingAccount(Customer customer) {
         super(customer);
         setAccountType(AccountType.SAVINGS_ACCOUNT);
-        setAccountStatus(AccountStatus.ACTIVE);
         deposit(Constant.MIN_SAVING_ACCOUNT_BAL);
     }
 
@@ -56,8 +57,22 @@ public class SavingAccount extends Account implements Transferable {
     }
     @Override
     public void transferFunds(double amount, Account destinationAccount) {
-        withdraw(amount);
-        destinationAccount.deposit(amount);
+        if (destinationAccount == null) {
+            throw new IllegalArgumentException("Destination account must not be null");
+        }
+        if (destinationAccount == this) {
+            throw new IllegalArgumentException("Source and destination accounts must be different");
+        }
+        if (destinationAccount.getAccountStatus() != AccountStatus.ACTIVE) {
+            throw new AccountClosedException("Destination account is closed");
+        }
+        withdraw(amount);//throws immediately if insufficient funds — deposit never runs
+        try {
+            destinationAccount.deposit(amount);
+        } catch (Exception e) {
+            this.deposit(amount); // compensating transaction — undo the withdrawal
+            throw new TransferFailException("Transfer failed, rolled back", e);
+        }
 
     }
 

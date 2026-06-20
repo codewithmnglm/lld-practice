@@ -26,7 +26,6 @@ public class LoanAccount extends Account {
     public LoanAccount(Customer customer, double principalAmount, double interestRate, int tenureInMonths) {
         super(customer);
         setAccountType(AccountType.LOAN_ACCOUNT);
-        setAccountStatus(AccountStatus.ACTIVE);
         this.principalAmount = principalAmount;
         this.interestRate = interestRate;
         this.tenureInMonths = tenureInMonths;
