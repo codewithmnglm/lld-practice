@@ -5,6 +5,7 @@ import com.banking.common.CommonBase;
 import com.banking.customer.Customer;
 import com.banking.exception.AccountClosedException;
 import com.banking.exception.DepositNotAllowedException;
+import com.banking.exception.WithdrawalNotAllowedException;
 import com.banking.transaction.Transaction;
 import com.banking.transaction.TransactionType;
 
@@ -27,6 +28,7 @@ public abstract class Account {
     public Account(Customer customer) {
         this.customer = customer;
         this.accountNo = CommonBase.generateAccountNumber();
+        this.accountStatus = AccountStatus.ACTIVE;
 
     }
     public abstract void withdraw(double amount);
@@ -73,16 +75,10 @@ public abstract class Account {
 
     public void deposit(double amount) {
 
-        if (getAccountStatus() == AccountStatus.ACTIVE) {
-
-            if (amount <= 0) {
-                throw new DepositNotAllowedException("Amount must be greater than 0");
-            }
-            this.balance += amount;
-            transactions.add(new Transaction(amount, TransactionType.CREDIT, LocalDateTime.now(), customer.getCustomerId()));
-
-        } else throw new AccountClosedException("Account Already Closed");
-
+        ensureAccountIsActive(getAccountStatus());
+        validatePositiveAmount(amount);
+        setBalance(getBalance() + amount);
+        recordTransaction(new Transaction(amount, TransactionType.CREDIT, LocalDateTime.now(), customer.getCustomerId()));
 
     }
     public List<Transaction> getTransactions() {
@@ -112,6 +108,52 @@ public abstract class Account {
                 .mapToDouble(Transaction::getAmount)
                 .sum();
     }
+
+    protected void ensureAccountIsActive(AccountStatus accountStatus) {
+        if (accountStatus != AccountStatus.ACTIVE) {
+            throw new AccountClosedException("Account is not active");
+        }
+    }
+
+    protected void validatePositiveAmount(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException(
+                    "Amount must be greater than zero"
+            );
+        }
+    }
+
+
+
+    protected void recordTransaction(Transaction transaction) {
+        transactions.add(transaction);
+    }
+
+
+    public void activate() {
+        accountStatus = AccountStatus.ACTIVE;
+    }
+
+    public void close() {
+        if (accountStatus == AccountStatus.CLOSED) {
+            throw new AccountClosedException("Account is already closed");
+        }
+
+        accountStatus = AccountStatus.CLOSED;
+    }
+
+    public void freeze() {
+        if (accountStatus != AccountStatus.ACTIVE) {
+            throw new IllegalStateException(
+                    "Only an active account can be frozen"
+            );
+        }
+
+        accountStatus = AccountStatus.FROZEN;
+    }
+
+
+
 
 
 }

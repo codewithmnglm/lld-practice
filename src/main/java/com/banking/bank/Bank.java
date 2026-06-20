@@ -46,12 +46,6 @@ public class Bank {
         if (!customer.getAccounts().contains(account)) {
             throw new AccountException("Account does not belong to this customer");
         }
-
-        if (account.getAccountStatus() == AccountStatus.ACTIVE) {
-            account.setAccountStatus(AccountStatus.CLOSED);
-        } else {
-            throw new AccountClosedException("Account Already Closed");
-        }
-
+        account.close();
     }
 }
