@@ -5,6 +5,7 @@ import com.banking.customer.Customer;
 import com.banking.exception.AccountClosedException;
 import com.banking.exception.TransferFailException;
 import com.banking.exception.WithdrawalNotAllowedException;
+import com.banking.interest.CurrentAccountInterestPolicy;
 import com.banking.transaction.Transaction;
 import com.banking.transaction.TransactionType;
 
@@ -14,7 +15,7 @@ public class CurrentAccount extends TransferableAccount {
 
 
     public CurrentAccount(Customer customer) {
-        super(customer);
+        super(customer, new CurrentAccountInterestPolicy());
         setAccountType(AccountType.CURRENT_ACCOUNT);
     }
 

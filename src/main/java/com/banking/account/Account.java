@@ -6,6 +6,7 @@ import com.banking.customer.Customer;
 import com.banking.exception.AccountClosedException;
 import com.banking.exception.DepositNotAllowedException;
 import com.banking.exception.WithdrawalNotAllowedException;
+import com.banking.interest.InterestPolicy;
 import com.banking.transaction.Transaction;
 import com.banking.transaction.TransactionType;
 
@@ -23,12 +24,15 @@ public abstract class Account {
     protected AccountStatus accountStatus;
     protected List<Transaction> transactions = new ArrayList<>();
     private String accountNo;
+    protected InterestPolicy interestPolicy;
 
 
-    public Account(Customer customer) {
+    public Account(Customer customer,InterestPolicy interestPolicy) {
         this.customer = customer;
         this.accountNo = CommonBase.generateAccountNumber();
         this.accountStatus = AccountStatus.ACTIVE;
+        this.interestPolicy = interestPolicy;
+
 
     }
     public abstract void withdraw(double amount);
@@ -150,6 +154,11 @@ public abstract class Account {
         }
 
         accountStatus = AccountStatus.FROZEN;
+    }
+
+    public double getInterestAmount() {
+
+        return this.interestPolicy.calculateInterest(this,15);
     }
 
 

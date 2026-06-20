@@ -8,6 +8,7 @@ import com.banking.exception.AccountClosedException;
 import com.banking.exception.DepositNotAllowedException;
 import com.banking.exception.InvalidTenureException;
 import com.banking.exception.WithdrawalNotAllowedException;
+import com.banking.interest.NoInterestPolicy;
 import com.banking.transaction.Transaction;
 import com.banking.transaction.TransactionType;
 
@@ -24,7 +25,7 @@ public class LoanAccount extends Account {
     private List<EmiSchedule> emiSchedules;
 
     public LoanAccount(Customer customer, double principalAmount, double interestRate, int tenureInMonths) {
-        super(customer);
+        super(customer, new NoInterestPolicy());
         setAccountType(AccountType.LOAN_ACCOUNT);
         this.principalAmount = principalAmount;
         this.interestRate = interestRate;

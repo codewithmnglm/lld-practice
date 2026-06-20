@@ -1,15 +1,10 @@
-package com.banking;
+package com.test.banking;
 
-import com.banking.account.Account;
 import com.banking.account.AccountType;
-import com.banking.account.LoanAccount;
 import com.banking.account.OverDraftAccount;
 import com.banking.bank.Bank;
 import com.banking.common.CommonBase;
 import com.banking.customer.Customer;
-import com.banking.emi.EmiSchedule;
-
-import java.util.List;
 
 public class test {
 
@@ -57,6 +52,8 @@ public class test {
         odAccount.withdraw(13000.0);
         System.out.println(odAccount.getBalance());
         odAccount.deposit(4000.0);
+
+        System.out.println(odAccount.getInterestAmount());
        // odAccount.getBalance();
         System.out.println(odAccount.getBalance());
 

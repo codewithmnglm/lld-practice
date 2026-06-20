@@ -3,6 +3,7 @@ package com.banking.account;
 import com.banking.constant.Constant;
 import com.banking.customer.Customer;
 import com.banking.exception.*;
+import com.banking.interest.SalaryAccountInterestPolicy;
 import com.banking.transaction.Transaction;
 import com.banking.transaction.TransactionType;
 
@@ -13,7 +14,7 @@ public class SalaryAccount extends TransferableAccount {
 
 
     public SalaryAccount(Customer customer) {
-        super(customer);
+        super(customer, new SalaryAccountInterestPolicy());
         setAccountType(AccountType.SALARY_ACCOUNT);
     }
 

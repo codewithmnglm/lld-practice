@@ -5,6 +5,8 @@ import com.banking.constant.Constant;
 import com.banking.customer.Customer;
 import com.banking.exception.AccountClosedException;
 import com.banking.exception.ODLimitReachedException;
+import com.banking.interest.SalaryAccountInterestPolicy;
+import com.banking.interest.SavingsAccountInterestPolicy;
 import com.banking.transaction.Transaction;
 import com.banking.transaction.TransactionType;
 
@@ -16,7 +18,7 @@ public class OverDraftAccount extends TransferableAccount {
     private double overDraftAmount;
 
     public OverDraftAccount(Customer customer) {
-        super(customer);
+        super(customer,new SalaryAccountInterestPolicy());
         setAccountType(AccountType.OD_ACCOUNT);
         setOverDraftAmount(Constant.OD_LIMIT);
     }

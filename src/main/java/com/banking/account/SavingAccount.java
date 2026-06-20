@@ -6,6 +6,7 @@ import com.banking.exception.DailyWithdrawlLimitReachedException;
 import com.banking.exception.TransferFailException;
 import com.banking.exception.WithdrawalNotAllowedException;
 import com.banking.constant.Constant;
+import com.banking.interest.SavingsAccountInterestPolicy;
 import com.banking.transaction.Transaction;
 import com.banking.transaction.TransactionType;
 import java.time.LocalDate;
@@ -17,7 +18,7 @@ public class SavingAccount extends TransferableAccount  {
 
 
     public SavingAccount(Customer customer) {
-        super(customer);
+        super(customer, new SavingsAccountInterestPolicy());
         setAccountType(AccountType.SAVINGS_ACCOUNT);
         deposit(Constant.MIN_SAVING_ACCOUNT_BAL);
     }
